@@ -66,13 +66,14 @@ button,input { font:inherit; } button { cursor:pointer; }
 .signature-mark img { width:58px; height:auto; transform:translateY(3px); }
 .signature-card--classic .signature-mark img { width:40px; }
 .signature-rule { align-self:stretch; width:1px; background:var(--navy); }
+.signature-card--classic .signature-rule { background:rgba(15,37,64,.14); }
 .signature-card--navy .signature-rule { background:var(--mint); }
 .signature-details { padding:0 0 0 29px; }
 .signature-details h2 { margin:-3px 0 0; font-size:28px; line-height:1.12; letter-spacing:-.045em; }
-.signature-role { margin:7px 0 17px; color:var(--green); font-family:'IBM Plex Mono','SFMono-Regular',Consolas,monospace; font-size:11px; line-height:1.55; letter-spacing:.09em; text-transform:uppercase; }
+.signature-role { margin:3px 0 10px; color:var(--green); font-family:'IBM Plex Mono','SFMono-Regular',Consolas,monospace; font-size:11px; line-height:1.55; letter-spacing:.09em; text-transform:uppercase; }
 .signature-card--navy .signature-role { color:var(--mint); }
 .signature-details dl { margin:0; font-size:13px; }
-.signature-details dl>div { display:grid; grid-template-columns:56px 1fr; gap:10px; margin-top:3px; }
+.signature-details dl>div { display:grid; grid-template-columns:56px 1fr; gap:10px; margin-top:1px; }
 .signature-details dl.signature-dl--icon>div { grid-template-columns:22px 1fr; }
 .signature-details dt { display:flex; align-items:center; gap:5px; color:var(--green); font-family:'IBM Plex Mono','SFMono-Regular',Consolas,monospace; font-size:9px; letter-spacing:.09em; }
 .signature-details dt svg { width:11px; height:11px; flex-shrink:0; }
