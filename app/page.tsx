@@ -2,6 +2,7 @@
 /* oxlint-disable next(no-img-element), jsx-a11y(prefer-tag-over-role) -- Raw images and radio-button cards are intentional for email-safe output and the themed picker. */
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import type { ComponentProps } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import type { IconSvgElement } from '@hugeicons/react';
 import { Call02Icon, CopyIcon, Download01Icon, GlobalIcon, Mail01Icon, RotateCcwIcon, Tick02Icon } from '@hugeicons/core-free-icons';
@@ -62,11 +63,15 @@ function toKebabCase(key: string) {
 
 function iconDataUri(icon: IconSvgElement, color: string, size: number) {
   const markup = icon.map(([tag, attrs]) => {
-    const attrString = Object.entries(attrs).filter(([key]) => key !== 'key').map(([key, value]) => `${toKebabCase(key)}="${value}"`).join(' ');
+    const attrString = Object.entries(attrs).filter(([key]) => key !== 'key').map(([key, value]) => `${toKebabCase(key)}="${key === 'strokeWidth' ? 2 : value}"`).join(' ');
     return `<${tag} ${attrString}/>`;
   }).join('');
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" color="${color}">${markup}</svg>`;
   return `data:image/svg+xml;base64,${btoa(svg)}`;
+}
+
+function Icon(props: ComponentProps<typeof HugeiconsIcon>) {
+  return <HugeiconsIcon strokeWidth={2} {...props} />;
 }
 
 function makeSignatureHtml(data: SignatureData, variant: Variant, logoSrc: string, labelStyle: LabelStyle) {
@@ -115,7 +120,7 @@ function SignaturePreview({ data, variant, labelStyle, logoSrc }: { data: Signat
   const showIcon = labelStyle !== 'text';
   const showText = labelStyle !== 'icon';
   function label(key: keyof typeof rowIcons, text: string) {
-    return <>{showIcon && <HugeiconsIcon icon={rowIcons[key]} aria-hidden="true" />}{showText ? text : <span className="sr-only">{text}</span>}</>;
+    return <>{showIcon && <Icon icon={rowIcons[key]} aria-hidden="true" />}{showText ? text : <span className="sr-only">{text}</span>}</>;
   }
   return <div className={`signature-card signature-card--${variant}${meta.isDark ? ' signature-card--dark' : ''}`}>
     <div className={meta.logoType === 'lockup' ? 'signature-lockup' : 'signature-mark'}><img src={logoSrc} alt="Agency AI" /></div>
@@ -179,7 +184,7 @@ export default function Home() {
   return <main className="app-shell">
     <section className="studio" aria-label="Email signature generator">
       <aside className="editor-panel">
-        <div className="panel-heading"><div><p className="step-label">01 / DETAILS</p><h2>Your information</h2></div><button className="reset-button" type="button" onClick={() => setData(defaults)}><HugeiconsIcon icon={RotateCcwIcon} aria-hidden="true" /> Reset</button></div>
+        <div className="panel-heading"><div><p className="step-label">01 / DETAILS</p><h2>Your information</h2></div><button className="reset-button" type="button" onClick={() => setData(defaults)}><Icon icon={RotateCcwIcon} aria-hidden="true" /> Reset</button></div>
         <div className="form-grid">{(Object.keys(defaults) as (keyof SignatureData)[]).map((key) => <label key={key} className={key === 'name' || key === 'email' || key === 'website' ? 'wide' : ''}><span>{key[0].toUpperCase() + key.slice(1)}</span><Input value={data[key]} onChange={(event) => update(key, event.target.value)} autoComplete={key === 'name' ? 'name' : key === 'email' ? 'email' : key === 'phone' ? 'tel' : 'off'} /></label>)}</div>
         <div className="variant-section"><p className="step-label">02 / FINISH</p><div className="variant-picker" role="radiogroup" aria-label="Signature finish">
           {variantOrder.map((key) => {
@@ -187,7 +192,7 @@ export default function Home() {
             return <button key={key} type="button" role="radio" aria-checked={variant === key} className={variant === key ? 'is-active' : ''} onClick={() => setVariant(key)}>
               <span className={`swatch ${meta.isDark ? 'swatch--navy' : 'swatch--classic'}`}><img src={meta.isDark ? '/logos/chevron-white.svg' : '/logos/chevron-navy.svg'} alt="" /></span>
               <span><strong>{meta.label}</strong><small>{meta.description}</small></span>
-              {variant === key && <HugeiconsIcon icon={Tick02Icon} aria-hidden="true" />}
+              {variant === key && <Icon icon={Tick02Icon} aria-hidden="true" />}
             </button>;
           })}
         </div></div>
@@ -200,8 +205,8 @@ export default function Home() {
       <div className="preview-panel">
         <div className="preview-topline"><div><p className="step-label">PREVIEW</p><span>Updates as you type</span></div></div>
         <div className="preview-canvas"><SignaturePreview data={data} variant={variant} labelStyle={labelStyle} logoSrc={logoSrc} /></div>
-        <div className="action-row"><Button className="copy-button" size="lg" onClick={copySignature}>{copied ? <HugeiconsIcon icon={Tick02Icon} aria-hidden="true" /> : <HugeiconsIcon icon={CopyIcon} aria-hidden="true" />}{copied ? 'Copied to clipboard' : 'Copy signature'}</Button><Button className="download-button" size="lg" variant="outline" onClick={downloadSignature}><HugeiconsIcon icon={Download01Icon} aria-hidden="true" /> Download HTML</Button></div>
-        <p className="paste-hint"><HugeiconsIcon icon={Mail01Icon} aria-hidden="true" /> Paste into Gmail, Outlook or Apple Mail’s signature editor.</p>
+        <div className="action-row"><Button className="copy-button" size="lg" onClick={copySignature}>{copied ? <Icon icon={Tick02Icon} aria-hidden="true" /> : <Icon icon={CopyIcon} aria-hidden="true" />}{copied ? 'Copied to clipboard' : 'Copy signature'}</Button><Button className="download-button" size="lg" variant="outline" onClick={downloadSignature}><Icon icon={Download01Icon} aria-hidden="true" /> Download HTML</Button></div>
+        <p className="paste-hint"><Icon icon={Mail01Icon} aria-hidden="true" /> Paste into Gmail, Outlook or Apple Mail’s signature editor.</p>
       </div>
     </section>
   </main>;
