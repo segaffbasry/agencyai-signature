@@ -3,7 +3,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { CopyIcon, Download01Icon, Mail01Icon, RotateCcwIcon, Tick02Icon } from '@hugeicons/core-free-icons';
+import { Call02Icon, CopyIcon, Download01Icon, GlobalIcon, Mail01Icon, RotateCcwIcon, Tick02Icon } from '@hugeicons/core-free-icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -49,9 +49,9 @@ function SignaturePreview({ data, variant }: { data: SignatureData; variant: Var
       <h2>{data.name || 'Your name'}</h2>
       <p className="signature-role">{[data.role, data.company].filter(Boolean).join(' · ') || 'Your role'}</p>
       <dl>
-        <div><dt>EMAIL</dt><dd><a href={emailHref(data.email)}>{data.email || 'you@company.com'}</a></dd></div>
-        <div><dt>PHONE</dt><dd><a href={phoneHref(data.phone)}>{data.phone || '+44 0000 000 000'}</a></dd></div>
-        <div><dt>WEB</dt><dd><a href={websiteHref(data.website)} target="_blank" rel="noreferrer">{data.website || 'www.company.com'}</a></dd></div>
+        <div><dt><HugeiconsIcon icon={Mail01Icon} aria-hidden="true" /> EMAIL</dt><dd><a href={emailHref(data.email)}>{data.email || 'you@company.com'}</a></dd></div>
+        <div><dt><HugeiconsIcon icon={Call02Icon} aria-hidden="true" /> PHONE</dt><dd><a href={phoneHref(data.phone)}>{data.phone || '+44 0000 000 000'}</a></dd></div>
+        <div><dt><HugeiconsIcon icon={GlobalIcon} aria-hidden="true" /> WEB</dt><dd><a href={websiteHref(data.website)} target="_blank" rel="noreferrer">{data.website || 'www.company.com'}</a></dd></div>
       </dl>
     </div>
   </div>;

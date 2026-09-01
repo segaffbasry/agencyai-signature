@@ -66,7 +66,8 @@ button,input { font:inherit; } button { cursor:pointer; }
 .signature-card--navy .signature-role { color:var(--mint); }
 .signature-details dl { margin:0; font-size:13px; }
 .signature-details dl>div { display:grid; grid-template-columns:56px 1fr; gap:10px; margin-top:3px; }
-.signature-details dt { color:var(--green); font-family:'IBM Plex Mono','SFMono-Regular',Consolas,monospace; font-size:9px; letter-spacing:.09em; }
+.signature-details dt { display:flex; align-items:center; gap:5px; color:var(--green); font-family:'IBM Plex Mono','SFMono-Regular',Consolas,monospace; font-size:9px; letter-spacing:.09em; }
+.signature-details dt svg { width:11px; height:11px; flex-shrink:0; }
 .signature-card--navy .signature-details dt { color:var(--mint); }
 .signature-details dd { margin:0; }
 .signature-details a { color:inherit; text-decoration:none; }
