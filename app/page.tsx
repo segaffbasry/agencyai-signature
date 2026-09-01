@@ -9,8 +9,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 type SignatureData = { name: string; role: string; company: string; email: string; phone: string; website: string };
-type Variant = 'classic' | 'navy';
+type Variant = 'classic' | 'navy' | 'lockup' | 'lockup-navy' | 'stacked' | 'stacked-navy';
 type LabelStyle = 'icon' | 'text' | 'both';
+type Layout = 'left' | 'stacked';
+type LogoType = 'mark' | 'lockup';
 
 const rowIcons = { email: Mail01Icon, phone: Call02Icon, website: GlobalIcon } as const satisfies Record<string, IconSvgElement>;
 
@@ -20,6 +22,30 @@ const defaults: SignatureData = {
 };
 const navy = '#0F2540';
 const mint = '#C7E2D0';
+
+const variantMeta: Record<Variant, { label: string; description: string; isDark: boolean; layout: Layout; logoType: LogoType }> = {
+  classic: { label: 'Classic', description: 'Clean & minimal', isDark: false, layout: 'left', logoType: 'mark' },
+  navy: { label: 'Navy', description: 'Rich & distinctive', isDark: true, layout: 'left', logoType: 'mark' },
+  lockup: { label: 'Lockup', description: 'Full wordmark', isDark: false, layout: 'left', logoType: 'lockup' },
+  'lockup-navy': { label: 'Lockup Navy', description: 'Full wordmark, deep ground', isDark: true, layout: 'left', logoType: 'lockup' },
+  stacked: { label: 'Stacked', description: 'Mark above', isDark: false, layout: 'stacked', logoType: 'mark' },
+  'stacked-navy': { label: 'Stacked Navy', description: 'Mark above, deep ground', isDark: true, layout: 'stacked', logoType: 'mark' },
+};
+const variantOrder = Object.keys(variantMeta) as Variant[];
+
+const LOGO_FILES = {
+  markLight: '/logos/chevron-navy.svg',
+  markDark: '/logos/chevron-white.svg',
+  lockupLight: '/logos/agencyai-vector-logo-pack/lockup-light.svg',
+  lockupDark: '/logos/agencyai-vector-logo-pack/lockup-dark.svg',
+} as const;
+type LogoKey = keyof typeof LOGO_FILES;
+
+function logoKeyFor(variant: Variant): LogoKey {
+  const meta = variantMeta[variant];
+  if (meta.logoType === 'lockup') return meta.isDark ? 'lockupDark' : 'lockupLight';
+  return meta.isDark ? 'markDark' : 'markLight';
+}
 
 function escapeHtml(value: string) {
   return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#039;');
@@ -45,12 +71,13 @@ function iconDataUri(icon: IconSvgElement, color: string, size: number) {
 
 function makeSignatureHtml(data: SignatureData, variant: Variant, logoSrc: string, labelStyle: LabelStyle) {
   const d = Object.fromEntries(Object.entries(data).map(([key, value]) => [key, escapeHtml(value)])) as SignatureData;
-  const isNavy = variant === 'navy';
-  const bodyColour = isNavy ? '#FFFFFF' : navy;
-  const secondaryColour = isNavy ? mint : '#43705A';
-  const panel = isNavy ? navy : '#FFFFFF';
-  const line = isNavy ? mint : navy;
-  const logoBackground = isNavy ? navy : mint;
+  const meta = variantMeta[variant];
+  const isDark = meta.isDark;
+  const bodyColour = isDark ? '#FFFFFF' : navy;
+  const secondaryColour = isDark ? mint : '#43705A';
+  const panel = isDark ? navy : '#FFFFFF';
+  const ruleColour = isDark ? mint : 'rgba(15,37,64,.14)';
+  const tileBackground = isDark ? navy : mint;
   const emailLink = escapeHtml(emailHref(data.email));
   const phoneLink = escapeHtml(phoneHref(data.phone));
   const webLink = escapeHtml(websiteHref(data.website));
@@ -60,18 +87,38 @@ function makeSignatureHtml(data: SignatureData, variant: Variant, logoSrc: strin
     if (labelStyle === 'text') return text;
     return `${icon}${text}`;
   }
-  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;background:${panel};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;color:${bodyColour};"><tr><td style="padding:${isNavy ? '28px 0 28px 28px' : '8px 0'};vertical-align:middle;"><table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr><td width="92" height="92" style="width:92px;height:92px;background:${logoBackground};border-radius:${isNavy ? '0' : '46px'};text-align:center;vertical-align:middle;"><img src="${logoSrc}" width="58" alt="Agency AI" style="display:block;width:58px;height:auto;margin:0 auto;border:0;transform:translateY(3px);" /></td></tr></table></td><td width="1" style="width:1px;background:${line};font-size:0;line-height:0;">&nbsp;</td><td style="padding:${isNavy ? '28px 32px 28px 30px' : '8px 34px 8px 28px'};vertical-align:middle;min-width:285px;"><div style="font-size:26px;line-height:31px;font-weight:700;letter-spacing:-0.7px;color:${bodyColour};">${d.name}</div><div style="margin-top:6px;font-family:'IBM Plex Mono','SFMono-Regular',Consolas,monospace;font-size:11px;line-height:17px;letter-spacing:.09em;text-transform:uppercase;color:${secondaryColour};">${d.role}${d.role && d.company ? ' / ' : ''}${d.company}</div><div style="height:17px;line-height:17px;">&nbsp;</div><table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:13px;line-height:17px;color:${bodyColour};"><tr><td style="padding:0 12px 1px 0;color:${secondaryColour};font-family:'IBM Plex Mono',Consolas,monospace;font-size:11px;letter-spacing:.08em;">${labelCell('email', 'EMAIL')}</td><td style="padding:0 0 1px;"><a href="${emailLink}" style="color:${bodyColour};text-decoration:none;">${d.email}</a></td></tr><tr><td style="padding:0 12px 1px 0;color:${secondaryColour};font-family:'IBM Plex Mono',Consolas,monospace;font-size:11px;letter-spacing:.08em;">${labelCell('phone', 'PHONE')}</td><td style="padding:0 0 1px;"><a href="${phoneLink}" style="color:${bodyColour};text-decoration:none;">${d.phone}</a></td></tr><tr><td style="padding:0 12px;color:${secondaryColour};font-family:'IBM Plex Mono',Consolas,monospace;font-size:11px;letter-spacing:.08em;">${labelCell('website', 'WEB')}</td><td><a href="${webLink}" style="color:${bodyColour};text-decoration:none;">${d.website}</a></td></tr></table></td></tr></table>`;
+  const contactTable = `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:13px;line-height:17px;color:${bodyColour};"><tr><td style="padding:0 12px 1px 0;color:${secondaryColour};font-family:'IBM Plex Mono',Consolas,monospace;font-size:11px;letter-spacing:.08em;">${labelCell('email', 'EMAIL')}</td><td style="padding:0 0 1px;"><a href="${emailLink}" style="color:${bodyColour};text-decoration:none;">${d.email}</a></td></tr><tr><td style="padding:0 12px 1px 0;color:${secondaryColour};font-family:'IBM Plex Mono',Consolas,monospace;font-size:11px;letter-spacing:.08em;">${labelCell('phone', 'PHONE')}</td><td style="padding:0 0 1px;"><a href="${phoneLink}" style="color:${bodyColour};text-decoration:none;">${d.phone}</a></td></tr><tr><td style="padding:0 12px;color:${secondaryColour};font-family:'IBM Plex Mono',Consolas,monospace;font-size:11px;letter-spacing:.08em;">${labelCell('website', 'WEB')}</td><td><a href="${webLink}" style="color:${bodyColour};text-decoration:none;">${d.website}</a></td></tr></table>`;
+  const detailsBlock = `<div style="font-size:26px;line-height:31px;font-weight:700;letter-spacing:-0.7px;color:${bodyColour};">${d.name}</div><div style="margin-top:3px;font-family:'IBM Plex Mono','SFMono-Regular',Consolas,monospace;font-size:11px;line-height:17px;letter-spacing:.09em;text-transform:uppercase;color:${secondaryColour};">${d.role}${d.role && d.company ? ' / ' : ''}${d.company}</div><div style="height:10px;line-height:10px;">&nbsp;</div>${contactTable}`;
+
+  if (meta.layout === 'stacked') {
+    const tileSize = isDark ? 72 : 64;
+    const tileImgWidth = isDark ? 46 : 40;
+    const tileRadius = isDark ? 0 : Math.round(tileSize / 2);
+    const markTile = `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr><td width="${tileSize}" height="${tileSize}" style="width:${tileSize}px;height:${tileSize}px;background:${tileBackground};border-radius:${tileRadius}px;text-align:center;vertical-align:middle;"><img src="${logoSrc}" width="${tileImgWidth}" alt="Agency AI" style="display:block;width:${tileImgWidth}px;height:auto;margin:0 auto;border:0;transform:translateY(3px);" /></td></tr></table>`;
+    return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;background:${panel};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;color:${bodyColour};"><tr><td style="padding:${isDark ? '28px 28px 0' : '8px 0 0'};">${markTile}</td></tr><tr><td style="padding:${isDark ? '16px 28px 28px' : '16px 0 8px'};border-top:1px solid ${ruleColour};min-width:285px;">${detailsBlock}</td></tr></table>`;
+  }
+
+  if (meta.logoType === 'lockup') {
+    const lockupHeight = 30;
+    const lockupWidth = Math.round((357.12 / 73.92) * lockupHeight);
+    return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;background:${panel};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;color:${bodyColour};"><tr><td style="padding:${isDark ? '28px 24px 28px 28px' : '8px 24px 8px 0'};vertical-align:middle;"><img src="${logoSrc}" width="${lockupWidth}" height="${lockupHeight}" alt="Agency AI" style="display:block;width:${lockupWidth}px;height:${lockupHeight}px;border:0;" /></td><td width="1" style="width:1px;background:${ruleColour};font-size:0;line-height:0;">&nbsp;</td><td style="padding:${isDark ? '28px 32px 28px 30px' : '8px 34px 8px 28px'};vertical-align:middle;min-width:285px;">${detailsBlock}</td></tr></table>`;
+  }
+
+  const tileSize = isDark ? 92 : 64;
+  const tileImgWidth = isDark ? 58 : 40;
+  const tileRadius = isDark ? 0 : Math.round(tileSize / 2);
+  return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;background:${panel};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;color:${bodyColour};"><tr><td style="padding:${isDark ? '28px 0 28px 28px' : '8px 0'};vertical-align:middle;"><table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr><td width="${tileSize}" height="${tileSize}" style="width:${tileSize}px;height:${tileSize}px;background:${tileBackground};border-radius:${tileRadius}px;text-align:center;vertical-align:middle;"><img src="${logoSrc}" width="${tileImgWidth}" alt="Agency AI" style="display:block;width:${tileImgWidth}px;height:auto;margin:0 auto;border:0;transform:translateY(3px);" /></td></tr></table></td><td width="1" style="width:1px;background:${ruleColour};font-size:0;line-height:0;">&nbsp;</td><td style="padding:${isDark ? '28px 32px 28px 30px' : '8px 34px 8px 28px'};vertical-align:middle;min-width:285px;">${detailsBlock}</td></tr></table>`;
 }
 
-function SignaturePreview({ data, variant, labelStyle }: { data: SignatureData; variant: Variant; labelStyle: LabelStyle }) {
-  const isNavy = variant === 'navy';
+function SignaturePreview({ data, variant, labelStyle, logoSrc }: { data: SignatureData; variant: Variant; labelStyle: LabelStyle; logoSrc: string }) {
+  const meta = variantMeta[variant];
   const showIcon = labelStyle !== 'text';
   const showText = labelStyle !== 'icon';
   function label(key: keyof typeof rowIcons, text: string) {
     return <>{showIcon && <HugeiconsIcon icon={rowIcons[key]} aria-hidden="true" />}{showText ? text : <span className="sr-only">{text}</span>}</>;
   }
-  return <div className={`signature-card ${isNavy ? 'signature-card--navy' : 'signature-card--classic'}`}>
-    <div className="signature-mark"><img src={isNavy ? '/logos/chevron-white.svg' : '/logos/chevron-navy.svg'} alt="Agency AI" /></div>
+  return <div className={`signature-card signature-card--${variant}${meta.isDark ? ' signature-card--dark' : ''}`}>
+    <div className={meta.logoType === 'lockup' ? 'signature-lockup' : 'signature-mark'}><img src={logoSrc} alt="Agency AI" /></div>
     <div className="signature-rule" />
     <div className="signature-details">
       <h2>{data.name || 'Your name'}</h2>
@@ -90,19 +137,19 @@ export default function Home() {
   const [variant, setVariant] = useState<Variant>('classic');
   const [labelStyle, setLabelStyle] = useState<LabelStyle>('both');
   const [copied, setCopied] = useState(false);
-  const [logoData, setLogoData] = useState<Record<Variant, string> | null>(null);
+  const [logoData, setLogoData] = useState<Record<LogoKey, string> | null>(null);
   const copiedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const paths: Record<Variant, string> = { classic: '/logos/chevron-navy.svg', navy: '/logos/chevron-white.svg' };
-    void Promise.all((Object.keys(paths) as Variant[]).map(async (key) => {
-      const svg = await fetch(paths[key]).then((response) => response.text());
+    void Promise.all((Object.keys(LOGO_FILES) as LogoKey[]).map(async (key) => {
+      const svg = await fetch(LOGO_FILES[key]).then((response) => response.text());
       return [key, `data:image/svg+xml;base64,${btoa(svg)}`] as const;
-    })).then((entries) => setLogoData(Object.fromEntries(entries) as Record<Variant, string>)).catch(() => setLogoData(null));
+    })).then((entries) => setLogoData(Object.fromEntries(entries) as Record<LogoKey, string>)).catch(() => setLogoData(null));
     return () => { if (copiedTimer.current) clearTimeout(copiedTimer.current); };
   }, []);
 
-  const html = useMemo(() => makeSignatureHtml(data, variant, logoData?.[variant] ?? `/logos/${variant === 'navy' ? 'chevron-white' : 'chevron-navy'}.svg`, labelStyle), [data, variant, logoData, labelStyle]);
+  const logoSrc = logoData?.[logoKeyFor(variant)] ?? LOGO_FILES[logoKeyFor(variant)];
+  const html = useMemo(() => makeSignatureHtml(data, variant, logoSrc, labelStyle), [data, variant, logoSrc, labelStyle]);
   function update(key: keyof SignatureData, value: string) { setData((current) => ({ ...current, [key]: value })); }
 
   async function copySignature() {
@@ -135,8 +182,14 @@ export default function Home() {
         <div className="panel-heading"><div><p className="step-label">01 / DETAILS</p><h2>Your information</h2></div><button className="reset-button" type="button" onClick={() => setData(defaults)}><HugeiconsIcon icon={RotateCcwIcon} aria-hidden="true" /> Reset</button></div>
         <div className="form-grid">{(Object.keys(defaults) as (keyof SignatureData)[]).map((key) => <label key={key} className={key === 'name' || key === 'email' || key === 'website' ? 'wide' : ''}><span>{key[0].toUpperCase() + key.slice(1)}</span><Input value={data[key]} onChange={(event) => update(key, event.target.value)} autoComplete={key === 'name' ? 'name' : key === 'email' ? 'email' : key === 'phone' ? 'tel' : 'off'} /></label>)}</div>
         <div className="variant-section"><p className="step-label">02 / FINISH</p><div className="variant-picker" role="radiogroup" aria-label="Signature finish">
-          <button type="button" role="radio" aria-checked={variant === 'classic'} className={variant === 'classic' ? 'is-active' : ''} onClick={() => setVariant('classic')}><span className="swatch swatch--classic"><img src="/logos/chevron-navy.svg" alt="" /></span><span><strong>Classic</strong><small>Clean & minimal</small></span>{variant === 'classic' && <HugeiconsIcon icon={Tick02Icon} aria-hidden="true" />}</button>
-          <button type="button" role="radio" aria-checked={variant === 'navy'} className={variant === 'navy' ? 'is-active' : ''} onClick={() => setVariant('navy')}><span className="swatch swatch--navy"><img src="/logos/chevron-white.svg" alt="" /></span><span><strong>Navy</strong><small>Rich & distinctive</small></span>{variant === 'navy' && <HugeiconsIcon icon={Tick02Icon} aria-hidden="true" />}</button>
+          {variantOrder.map((key) => {
+            const meta = variantMeta[key];
+            return <button key={key} type="button" role="radio" aria-checked={variant === key} className={variant === key ? 'is-active' : ''} onClick={() => setVariant(key)}>
+              <span className={`swatch ${meta.isDark ? 'swatch--navy' : 'swatch--classic'}`}><img src={meta.isDark ? '/logos/chevron-white.svg' : '/logos/chevron-navy.svg'} alt="" /></span>
+              <span><strong>{meta.label}</strong><small>{meta.description}</small></span>
+              {variant === key && <HugeiconsIcon icon={Tick02Icon} aria-hidden="true" />}
+            </button>;
+          })}
         </div></div>
         <div className="label-style-section"><p className="step-label">03 / LABELS</p><div className="label-style-picker" role="radiogroup" aria-label="Row label style">
           <button type="button" role="radio" aria-checked={labelStyle === 'icon'} className={labelStyle === 'icon' ? 'is-active' : ''} onClick={() => setLabelStyle('icon')}>Icon</button>
@@ -146,7 +199,7 @@ export default function Home() {
       </aside>
       <div className="preview-panel">
         <div className="preview-topline"><div><p className="step-label">PREVIEW</p><span>Updates as you type</span></div></div>
-        <div className="preview-canvas"><SignaturePreview data={data} variant={variant} labelStyle={labelStyle} /></div>
+        <div className="preview-canvas"><SignaturePreview data={data} variant={variant} labelStyle={labelStyle} logoSrc={logoSrc} /></div>
         <div className="action-row"><Button className="copy-button" size="lg" onClick={copySignature}>{copied ? <HugeiconsIcon icon={Tick02Icon} aria-hidden="true" /> : <HugeiconsIcon icon={CopyIcon} aria-hidden="true" />}{copied ? 'Copied to clipboard' : 'Copy signature'}</Button><Button className="download-button" size="lg" variant="outline" onClick={downloadSignature}><HugeiconsIcon icon={Download01Icon} aria-hidden="true" /> Download HTML</Button></div>
         <p className="paste-hint"><HugeiconsIcon icon={Mail01Icon} aria-hidden="true" /> Paste into Gmail, Outlook or Apple Mail’s signature editor.</p>
       </div>

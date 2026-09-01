@@ -25,7 +25,7 @@ button,input { font:inherit; } button { cursor:pointer; }
 .header-label,.step-label { font-family:'IBM Plex Mono','SFMono-Regular',Consolas,monospace; letter-spacing:.13em; }
 .header-label { font-size:10px; font-weight:600; }
 .studio { display:grid; grid-template-columns:minmax(350px,.84fr) minmax(530px,1.45fr); flex:1; min-height:0; margin:clamp(18px,3vw,40px) clamp(24px,5vw,76px); overflow:hidden; border:1px solid #dce4ed; border-radius:26px; background:#fff; box-shadow:0 24px 64px rgba(15,37,64,.07),0 2px 8px rgba(15,37,64,.025); }
-.editor-panel { padding:clamp(28px,3vw,44px); border-right:1px solid rgba(15,37,64,.18); }
+.editor-panel { padding:clamp(28px,3vw,44px); border-right:1px solid rgba(15,37,64,.18); overflow-y:auto; }
 .preview-panel { display:flex; min-width:0; min-height:0; flex-direction:column; padding:clamp(28px,3vw,44px); background:#f4f8fc; }
 .panel-heading,.preview-topline,.action-row { display:flex; align-items:center; justify-content:space-between; }
 .step-label { margin:0 0 8px; color:var(--green); font-size:9px; font-weight:600; }
@@ -57,28 +57,43 @@ button,input { font:inherit; } button { cursor:pointer; }
 .label-style-picker button.is-active { box-shadow:0 0 0 1px var(--navy); font-weight:600; }
 .preview-topline>div>span { color:#77847c; font-size:12px; }
 .preview-canvas { display:grid; flex:1; min-height:260px; margin:24px 0 20px; padding:clamp(24px,4vw,54px); place-items:center; overflow:auto; border:1px solid #dce5ee; border-radius:22px; background:#fff; box-shadow:0 16px 40px rgba(15,37,64,.045); }
-.signature-card { display:grid; grid-template-columns:92px 1px minmax(285px,auto); align-items:center; width:max-content; min-width:465px; font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Segoe UI',Arial,sans-serif; }
-.signature-card--navy { padding:28px; background:var(--navy); color:#fff; }
-.signature-card--classic { padding:8px 34px 8px 0; background:#fff; color:var(--navy); }
+.signature-card { display:grid; grid-template-columns:92px 1px minmax(285px,auto); align-items:center; width:max-content; min-width:465px; font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Segoe UI',Arial,sans-serif; background:#fff; color:var(--navy); }
+.signature-card--dark { background:var(--navy); color:#fff; }
+.signature-card--classic { padding:8px 34px 8px 0; }
+.signature-card--navy { padding:28px; }
+.signature-card--lockup,.signature-card--lockup-navy { grid-template-columns:auto 1px minmax(285px,auto); }
+.signature-card--lockup { padding:8px 34px 8px 0; }
+.signature-card--lockup-navy { padding:28px; }
+.signature-card--stacked,.signature-card--stacked-navy { grid-template-columns:1fr; grid-template-rows:auto auto; row-gap:14px; justify-items:start; }
+.signature-card--stacked { padding:8px 8px 8px 0; }
+.signature-card--stacked-navy { padding:28px; }
 .signature-mark { display:grid; width:92px; height:92px; place-items:center; border-radius:50%; background:var(--mint); }
-.signature-card--navy .signature-mark { border-radius:0; background:var(--navy); }
-.signature-card--classic .signature-mark { width:64px; height:64px; }
+.signature-card--dark .signature-mark { border-radius:0; background:var(--navy); }
+.signature-card--classic .signature-mark,.signature-card--stacked .signature-mark { width:64px; height:64px; }
+.signature-card--stacked-navy .signature-mark { width:72px; height:72px; }
 .signature-mark img { width:58px; height:auto; transform:translateY(3px); }
-.signature-card--classic .signature-mark img { width:40px; }
+.signature-card--classic .signature-mark img,.signature-card--stacked .signature-mark img { width:40px; }
+.signature-card--stacked-navy .signature-mark img { width:46px; }
+.signature-lockup { display:flex; align-items:center; }
+.signature-lockup img { display:block; height:30px; width:auto; }
 .signature-rule { align-self:stretch; width:1px; background:var(--navy); }
-.signature-card--classic .signature-rule { background:rgba(15,37,64,.14); }
-.signature-card--navy .signature-rule { background:var(--mint); }
+.signature-card--classic .signature-rule,.signature-card--lockup .signature-rule { background:rgba(15,37,64,.14); }
+.signature-card--dark .signature-rule { background:var(--mint); }
+.signature-card--stacked .signature-rule,.signature-card--stacked-navy .signature-rule { display:none; }
 .signature-details { padding:0 0 0 29px; }
+.signature-card--lockup .signature-details,.signature-card--lockup-navy .signature-details { padding:0 0 0 24px; }
+.signature-card--stacked .signature-details,.signature-card--stacked-navy .signature-details { width:100%; padding:16px 0 0; border-top:1px solid rgba(15,37,64,.14); }
+.signature-card--stacked-navy .signature-details { border-top-color:rgba(199,226,208,.35); }
 .signature-details h2 { margin:-3px 0 0; font-size:28px; line-height:1.12; letter-spacing:-.045em; }
 .signature-role { margin:3px 0 10px; color:var(--green); font-family:'IBM Plex Mono','SFMono-Regular',Consolas,monospace; font-size:11px; line-height:1.55; letter-spacing:.09em; text-transform:uppercase; }
-.signature-card--navy .signature-role { color:var(--mint); }
+.signature-card--dark .signature-role { color:var(--mint); }
 .signature-details dl { margin:0; font-size:13px; }
 .signature-details dl>div { display:grid; grid-template-columns:56px 1fr; gap:10px; margin-top:1px; }
 .signature-details dl.signature-dl--icon>div { grid-template-columns:22px 1fr; }
 .signature-details dt { display:flex; align-items:center; gap:5px; color:var(--green); font-family:'IBM Plex Mono','SFMono-Regular',Consolas,monospace; font-size:9px; letter-spacing:.09em; }
 .signature-details dt svg { width:11px; height:11px; flex-shrink:0; }
 .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
-.signature-card--navy .signature-details dt { color:var(--mint); }
+.signature-card--dark .signature-details dt { color:var(--mint); }
 .signature-details dd { margin:0; }
 .signature-details a { color:inherit; text-decoration:none; }
 .signature-details a:hover { text-decoration:underline; text-underline-offset:3px; }
