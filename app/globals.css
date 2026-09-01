@@ -64,9 +64,8 @@ button,input { font:inherit; } button { cursor:pointer; }
 .signature-card--lockup,.signature-card--lockup-navy { grid-template-columns:auto 1px minmax(285px,auto); }
 .signature-card--lockup { padding:8px 34px 8px 0; }
 .signature-card--lockup-navy { padding:28px; }
-.signature-card--stacked,.signature-card--stacked-navy { grid-template-columns:1fr; grid-template-rows:auto auto; row-gap:14px; justify-items:start; }
-.signature-card--stacked { padding:8px 8px 8px 0; }
-.signature-card--stacked-navy { padding:28px; }
+.signature-card--stacked-layout { grid-template-columns:1fr; grid-template-rows:auto auto; row-gap:14px; justify-items:start; padding:8px 8px 8px 0; }
+.signature-card--stacked-layout.signature-card--dark { padding:28px; }
 .signature-mark { display:grid; width:92px; height:92px; place-items:center; border-radius:50%; background:var(--mint); }
 .signature-card--dark .signature-mark { border-radius:0; background:var(--navy); }
 .signature-card--classic .signature-mark,.signature-card--stacked .signature-mark { width:64px; height:64px; }
@@ -76,14 +75,16 @@ button,input { font:inherit; } button { cursor:pointer; }
 .signature-card--stacked-navy .signature-mark img { width:46px; }
 .signature-lockup { display:flex; align-items:center; }
 .signature-lockup img { display:block; height:30px; width:auto; }
+.signature-card--stacked-layout .signature-lockup img { height:34px; }
+.signature-card--lockup .signature-lockup,.signature-card--lockup-navy .signature-lockup { padding-right:26px; }
 .signature-rule { align-self:stretch; width:1px; background:var(--navy); }
 .signature-card--classic .signature-rule,.signature-card--lockup .signature-rule { background:rgba(15,37,64,.14); }
 .signature-card--dark .signature-rule { background:var(--mint); }
-.signature-card--stacked .signature-rule,.signature-card--stacked-navy .signature-rule { display:none; }
+.signature-card--stacked-layout .signature-rule { display:none; }
 .signature-details { padding:0 0 0 29px; }
-.signature-card--lockup .signature-details,.signature-card--lockup-navy .signature-details { padding:0 0 0 24px; }
-.signature-card--stacked .signature-details,.signature-card--stacked-navy .signature-details { width:100%; padding:16px 0 0; border-top:1px solid rgba(15,37,64,.14); }
-.signature-card--stacked-navy .signature-details { border-top-color:rgba(199,226,208,.35); }
+.signature-card--lockup .signature-details,.signature-card--lockup-navy .signature-details { padding:0 0 0 30px; }
+.signature-card--stacked-layout .signature-details { width:100%; padding:16px 0 0; border-top:1px solid rgba(15,37,64,.14); }
+.signature-card--stacked-layout.signature-card--dark .signature-details { border-top-color:rgba(199,226,208,.35); }
 .signature-details h2 { margin:-3px 0 0; font-size:28px; line-height:1.12; letter-spacing:-.045em; }
 .signature-role { margin:3px 0 10px; color:var(--green); font-family:'IBM Plex Mono','SFMono-Regular',Consolas,monospace; font-size:11px; line-height:1.55; letter-spacing:.09em; text-transform:uppercase; }
 .signature-card--dark .signature-role { color:var(--mint); }

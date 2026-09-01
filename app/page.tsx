@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 type SignatureData = { name: string; role: string; company: string; email: string; phone: string; website: string };
-type Variant = 'classic' | 'navy' | 'lockup' | 'lockup-navy' | 'stacked' | 'stacked-navy';
+type Variant = 'classic' | 'navy' | 'lockup' | 'lockup-navy' | 'stacked' | 'stacked-navy' | 'lockup-stacked' | 'lockup-stacked-navy';
 type LabelStyle = 'icon' | 'text' | 'both';
 type Layout = 'left' | 'stacked';
 type LogoType = 'mark' | 'lockup';
@@ -31,6 +31,8 @@ const variantMeta: Record<Variant, { label: string; description: string; isDark:
   'lockup-navy': { label: 'Lockup Navy', description: 'Full wordmark, deep ground', isDark: true, layout: 'left', logoType: 'lockup' },
   stacked: { label: 'Stacked', description: 'Mark above', isDark: false, layout: 'stacked', logoType: 'mark' },
   'stacked-navy': { label: 'Stacked Navy', description: 'Mark above, deep ground', isDark: true, layout: 'stacked', logoType: 'mark' },
+  'lockup-stacked': { label: 'Lockup Stacked', description: 'Full wordmark above', isDark: false, layout: 'stacked', logoType: 'lockup' },
+  'lockup-stacked-navy': { label: 'Lockup Stacked Navy', description: 'Full wordmark above, deep ground', isDark: true, layout: 'stacked', logoType: 'lockup' },
 };
 const variantOrder = Object.keys(variantMeta) as Variant[];
 
@@ -96,17 +98,25 @@ function makeSignatureHtml(data: SignatureData, variant: Variant, logoSrc: strin
   const detailsBlock = `<div style="font-size:26px;line-height:31px;font-weight:700;letter-spacing:-0.7px;color:${bodyColour};">${d.name}</div><div style="margin-top:3px;font-family:'IBM Plex Mono','SFMono-Regular',Consolas,monospace;font-size:11px;line-height:17px;letter-spacing:.09em;text-transform:uppercase;color:${secondaryColour};">${d.role}${d.role && d.company ? ' / ' : ''}${d.company}</div><div style="height:10px;line-height:10px;">&nbsp;</div>${contactTable}`;
 
   if (meta.layout === 'stacked') {
-    const tileSize = isDark ? 72 : 64;
-    const tileImgWidth = isDark ? 46 : 40;
-    const tileRadius = isDark ? 0 : Math.round(tileSize / 2);
-    const markTile = `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr><td width="${tileSize}" height="${tileSize}" style="width:${tileSize}px;height:${tileSize}px;background:${tileBackground};border-radius:${tileRadius}px;text-align:center;vertical-align:middle;"><img src="${logoSrc}" width="${tileImgWidth}" alt="Agency AI" style="display:block;width:${tileImgWidth}px;height:auto;margin:0 auto;border:0;transform:translateY(3px);" /></td></tr></table>`;
-    return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;background:${panel};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;color:${bodyColour};"><tr><td style="padding:${isDark ? '28px 28px 0' : '8px 0 0'};">${markTile}</td></tr><tr><td style="padding:${isDark ? '16px 28px 28px' : '16px 0 8px'};border-top:1px solid ${ruleColour};min-width:285px;">${detailsBlock}</td></tr></table>`;
+    const topCell = meta.logoType === 'lockup'
+      ? (() => {
+        const lockupHeight = 34;
+        const lockupWidth = Math.round((357.12 / 73.92) * lockupHeight);
+        return `<img src="${logoSrc}" width="${lockupWidth}" height="${lockupHeight}" alt="Agency AI" style="display:block;width:${lockupWidth}px;height:${lockupHeight}px;border:0;" />`;
+      })()
+      : (() => {
+        const tileSize = isDark ? 72 : 64;
+        const tileImgWidth = isDark ? 46 : 40;
+        const tileRadius = isDark ? 0 : Math.round(tileSize / 2);
+        return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;"><tr><td width="${tileSize}" height="${tileSize}" style="width:${tileSize}px;height:${tileSize}px;background:${tileBackground};border-radius:${tileRadius}px;text-align:center;vertical-align:middle;"><img src="${logoSrc}" width="${tileImgWidth}" alt="Agency AI" style="display:block;width:${tileImgWidth}px;height:auto;margin:0 auto;border:0;transform:translateY(3px);" /></td></tr></table>`;
+      })();
+    return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;background:${panel};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;color:${bodyColour};"><tr><td style="padding:${isDark ? '28px 28px 0' : '8px 0 0'};">${topCell}</td></tr><tr><td style="padding:${isDark ? '16px 28px 28px' : '16px 0 8px'};border-top:1px solid ${ruleColour};min-width:285px;">${detailsBlock}</td></tr></table>`;
   }
 
   if (meta.logoType === 'lockup') {
     const lockupHeight = 30;
     const lockupWidth = Math.round((357.12 / 73.92) * lockupHeight);
-    return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;background:${panel};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;color:${bodyColour};"><tr><td style="padding:${isDark ? '28px 24px 28px 28px' : '8px 24px 8px 0'};vertical-align:middle;"><img src="${logoSrc}" width="${lockupWidth}" height="${lockupHeight}" alt="Agency AI" style="display:block;width:${lockupWidth}px;height:${lockupHeight}px;border:0;" /></td><td width="1" style="width:1px;background:${ruleColour};font-size:0;line-height:0;">&nbsp;</td><td style="padding:${isDark ? '28px 32px 28px 30px' : '8px 34px 8px 28px'};vertical-align:middle;min-width:285px;">${detailsBlock}</td></tr></table>`;
+    return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;background:${panel};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;color:${bodyColour};"><tr><td style="padding:${isDark ? '28px 26px 28px 28px' : '8px 26px 8px 0'};vertical-align:middle;"><img src="${logoSrc}" width="${lockupWidth}" height="${lockupHeight}" alt="Agency AI" style="display:block;width:${lockupWidth}px;height:${lockupHeight}px;border:0;" /></td><td width="1" style="width:1px;background:${ruleColour};font-size:0;line-height:0;">&nbsp;</td><td style="padding:${isDark ? '28px 32px 28px 30px' : '8px 34px 8px 30px'};vertical-align:middle;min-width:285px;">${detailsBlock}</td></tr></table>`;
   }
 
   const tileSize = isDark ? 92 : 64;
@@ -122,7 +132,10 @@ function SignaturePreview({ data, variant, labelStyle, logoSrc }: { data: Signat
   function label(key: keyof typeof rowIcons, text: string) {
     return <>{showIcon && <Icon icon={rowIcons[key]} aria-hidden="true" />}{showText ? text : <span className="sr-only">{text}</span>}</>;
   }
-  return <div className={`signature-card signature-card--${variant}${meta.isDark ? ' signature-card--dark' : ''}`}>
+  const classNames = ['signature-card', `signature-card--${variant}`];
+  if (meta.isDark) classNames.push('signature-card--dark');
+  if (meta.layout === 'stacked') classNames.push('signature-card--stacked-layout');
+  return <div className={classNames.join(' ')}>
     <div className={meta.logoType === 'lockup' ? 'signature-lockup' : 'signature-mark'}><img src={logoSrc} alt="Agency AI" /></div>
     <div className="signature-rule" />
     <div className="signature-details">
