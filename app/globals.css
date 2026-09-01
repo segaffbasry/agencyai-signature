@@ -50,6 +50,11 @@ button,input { font:inherit; } button { cursor:pointer; }
 .swatch img { display:block; width:23px; height:auto; }
 .swatch--classic { border-radius:50%; background:var(--mint); }
 .swatch--navy { background:var(--navy); }
+.label-style-section { margin-top:20px; padding-top:20px; border-top:1px solid #dfe5e0; }
+.label-style-picker { display:flex; gap:6px; }
+.label-style-picker button { flex:1; padding:9px 6px; border:1px solid #d9e1e9; border-radius:10px; background:#fff; color:var(--navy); font-size:12px; text-align:center; }
+.label-style-picker button:hover,.label-style-picker button.is-active { border-color:var(--navy); }
+.label-style-picker button.is-active { box-shadow:0 0 0 1px var(--navy); font-weight:600; }
 .preview-topline>div>span { color:#77847c; font-size:12px; }
 .preview-canvas { display:grid; flex:1; min-height:260px; margin:24px 0 20px; padding:clamp(24px,4vw,54px); place-items:center; overflow:auto; border:1px solid #dce5ee; border-radius:22px; background:#fff; box-shadow:0 16px 40px rgba(15,37,64,.045); }
 .signature-card { display:grid; grid-template-columns:92px 1px minmax(285px,auto); align-items:center; width:max-content; min-width:465px; font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Segoe UI',Arial,sans-serif; }
@@ -57,7 +62,9 @@ button,input { font:inherit; } button { cursor:pointer; }
 .signature-card--classic { padding:8px 34px 8px 0; background:#fff; color:var(--navy); }
 .signature-mark { display:grid; width:92px; height:92px; place-items:center; border-radius:50%; background:var(--mint); }
 .signature-card--navy .signature-mark { border-radius:0; background:var(--navy); }
+.signature-card--classic .signature-mark { width:64px; height:64px; }
 .signature-mark img { width:58px; height:auto; transform:translateY(3px); }
+.signature-card--classic .signature-mark img { width:40px; }
 .signature-rule { align-self:stretch; width:1px; background:var(--navy); }
 .signature-card--navy .signature-rule { background:var(--mint); }
 .signature-details { padding:0 0 0 29px; }
@@ -66,8 +73,10 @@ button,input { font:inherit; } button { cursor:pointer; }
 .signature-card--navy .signature-role { color:var(--mint); }
 .signature-details dl { margin:0; font-size:13px; }
 .signature-details dl>div { display:grid; grid-template-columns:56px 1fr; gap:10px; margin-top:3px; }
+.signature-details dl.signature-dl--icon>div { grid-template-columns:22px 1fr; }
 .signature-details dt { display:flex; align-items:center; gap:5px; color:var(--green); font-family:'IBM Plex Mono','SFMono-Regular',Consolas,monospace; font-size:9px; letter-spacing:.09em; }
 .signature-details dt svg { width:11px; height:11px; flex-shrink:0; }
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 .signature-card--navy .signature-details dt { color:var(--mint); }
 .signature-details dd { margin:0; }
 .signature-details a { color:inherit; text-decoration:none; }
@@ -80,4 +89,3 @@ button,input { font:inherit; } button { cursor:pointer; }
 .paste-hint svg { width:13px; }
 @media (max-width:1050px) { .app-shell { min-height:100vh; overflow:visible; } .studio { grid-template-columns:1fr; } .editor-panel { border-right:0; border-bottom:1px solid rgba(15,37,64,.18); } }
 @media (max-width:640px) { .header-label { display:none; } .studio { margin:14px; border-radius:20px; } .editor-panel,.preview-panel { padding:24px 18px; } .form-grid { grid-template-columns:1fr; } .form-grid label.wide { grid-column:auto; } .variant-picker { grid-template-columns:1fr; } .preview-canvas { min-height:320px; padding:20px; place-items:start; border-radius:16px; } .signature-card { transform:scale(.78); transform-origin:top left; } .action-row { flex-direction:column; } .copy-button,.download-button { width:100%; flex:none; } }
-@media (prefers-reduced-motion:no-preference) { .signature-card { animation:signature-in 420ms ease-out both; } @keyframes signature-in { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } } }
